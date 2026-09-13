@@ -1,0 +1,37 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: pip install -r requirements-api.txt kagglehub
+
+      - name: Train Model
+        env:
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+        
+        run: python -m src.train
+
+      - uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: docker build -f Dockerfile.api -t ghcr.io/${{ github.repository }}-api:latest .
+      - run: docker push ghcr.io/${{ github.repository }}-api:latest
+
+      - run: docker build -f Dockerfile.streamlit -t ghcr.io/${{ github.repository }}-streamlit:latest .
+      - run: docker push ghcr.io/${{ github.repository }}-streamlit:latest
