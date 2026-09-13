@@ -12,3 +12,11 @@ jobs:
           python-version: "3.11"
       - run: pip install -r requirements-api.txt pytest
       - run: python -m pytest
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: mkdir -p models && touch models/model.pkl
+      - run: docker build -f Dockerfile.api -t ev-api .
+      - run: docker build -f Dockerfile.streamlit -t ev-streamlit .
