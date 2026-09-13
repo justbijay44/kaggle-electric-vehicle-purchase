@@ -5,3 +5,4 @@ models/*.pkl
 notebook/submission/
 notebook/catboost_info/
 *.csv
+GUIDE.md
