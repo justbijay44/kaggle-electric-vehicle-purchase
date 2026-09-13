@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+*.pyc
+models/*.pkl
+notebook/submission/
+notebook/catboost_info/
+*.csv
